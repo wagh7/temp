@@ -1,0 +1,165 @@
+char* str = "Akash";
+char str[6] = "Akash"; 
+strlen(str); // 5
+sizeof(str); // 4
+
+// Anagram
+bool isAnagram(string str1, string str2)
+{
+	if(str1.length() != str2.length())
+		return false;
+	
+	multimap<char, int> m;
+	for(int i=0; i<str1.length(); i++)
+	{
+		if(m.find(str1[i]) != m.end())
+			m[str1[i]] += 1;
+		else
+			m.insert(make_pair(str1[i], 1));
+	}
+	
+	for(int i=0; i<str2.length(); i++)
+	{
+		if(m.find(str2[i]) != m.end())
+		{
+			m[str1[i]] -= 1;
+		}
+		else
+			return false;
+	}
+	
+	for(int i=0; i<m.size(); i++)
+	{
+		if(m[i] != 0)
+			return false;
+	}
+	return true;
+}
+// sort both string
+
+bool compare(char a, char b)
+	return a<b;
+	
+bool isAnagram_1(string str1, string str2)
+{
+	if(str1.length() != str2.length())
+		return false;
+	if(str1 == str2)
+		return true;
+	
+	std::sort(str1[0], str1+str1.length(), compare);
+	std::sort(str2[0], str2+str2.length(), compare);
+	
+	if(str1 == str2)
+		return true;
+	else
+		return false;
+}
+
+
+// ASCII
+a-z: 97 - 122 
+A-Z: 65 - 90
+0-9: 48 - 57
+
+memcpy
+strcpy
+
+//Palindrome
+
+int longestPalSubstr(char *str)  
+{  
+    int maxLength = 1; // The result (length of LPS)  
+  
+    int start = 0;  
+    int len = strlen(str);  
+  
+    int low, high;  
+  
+    // One by one consider every character as center point of  
+    // even and length palindromes  
+    for (int i = 1; i < len; ++i)  
+    {  
+        // Find the longest even length palindrome  
+        // with center points as i-1 and i.  
+        low = i - 1;  
+        high = i;  
+        while (low >= 0 && high < len && str[low] == str[high])  
+        {  
+            if (high - low + 1 > maxLength)  
+            {  
+                start = low;  
+                maxLength = high - low + 1;  
+            }  
+            --low;  
+            ++high;  
+        }  
+  
+        // Find the longest odd length palindrome with center  
+        // point as i  
+        low = i - 1;  
+        high = i + 1;  
+        while (low >= 0 && high < len && str[low] == str[high])  
+        {  
+            if (high - low + 1 > maxLength)  
+            {  
+                start = low;  
+                maxLength = high - low + 1;  
+            }  
+            --low;  
+            ++high;  
+        }  
+    }  
+  
+    cout<<"Longest palindrome substring is: ";  
+    printSubStr(str, start, start + maxLength - 1);  
+  
+    return maxLength;  
+}  
+
+
+int Arr[256] = {0};
+multimap<char, int> m;
+
+// All substrings
+
+
+
+// All permutations
+void allPerm(string str, int l, int r)
+{
+	if(l == r)
+		cout<<str<<endl;
+	else
+	{
+		for(int i=l; i<r; i++)
+		{
+			swap(str[l], str[i]);
+			allPerm(str, l+1, r);
+			swap(str[l], str[i]);
+		}
+	}
+}
+
+
+// Find length of the longest substring without repeating char
+
+void allSubstring(string str, int n)
+{
+	for(int len=1; len<=n; len++)
+	{
+		for(int i=0; i < n-len; i++)
+		{
+			int j = i + len -1;
+			for(int k=0; k<=j; k++)
+				cout<<str[k];
+			cout<<endl;
+		}
+	}
+}
+
+
+
+
+
+

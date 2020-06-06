@@ -1,0 +1,205 @@
+Sorting
+
+bool compare(int a, int b)
+	return (a<b);
+std::sort(arr, arr+5, compare);
+
+1. SelectionSort
+O(n*n)
+void selectionSort(int* Arr, int len)
+{
+	for(int i=0; i<len-1; i++)
+	{
+		for(int j=i+1; j<len; j++)
+		{
+			if(Arr[i] > Arr[j])
+				swap(Arr[i], Arr[j]);
+		}
+	}
+}
+
+2. Bubble Sort
+O(n)
+O(n*n)
+void bubbleSort(int* Arr, int len)
+{
+	int flag = 0;
+	for(int i=0; i<len; i++)
+	{
+		for(int j=0; j<len-i; j++)
+		{
+			if(Arr[j] < Arr[j+1])
+			{
+				flag = 1;
+				swap(Arr[j], Arr[j+1]);
+			}
+		}
+		if(flag==0)
+			break;
+	}
+}
+
+3. Insertion Sort
+O(n)
+O(n*n)
+
+void insertSort(int* Arr, int len)
+{
+	for(int i=1; i<len; i++)
+	{
+		int j = i;
+		int x = Arr[j];
+		while(j>0 && Arr[j-1] > x)
+		{
+			Arr[j] = Arr[j-1];
+			j--;
+		}
+		Arr[j] = x;
+	}
+}
+
+4. Quick Sort
+O(n log n)
+O(n*n)
+
+void quickSort(int* Arr, int low, int high)
+{
+	int l=low+1;
+	int r = high;
+	if(low<=high)
+	{
+		while(l<=r)
+		{
+			while(l<high && Arr[l] < Arr[low])
+				l++;
+			while(r>low && Arr[r] > Arr[low])
+				r--;
+				
+			if(l<r && Arr[l]!=Arr[r])
+			{
+				swap(Arr[l], Arr[r]);
+			}
+			if(l == r)
+				break;
+			
+		}
+		if(Arr[r] != Arr[low])
+			swap(Arr[low],Arr[r]);
+		
+		quickSort(Arr, loq, r-1);
+		quickSort(Arr, r+1, high)
+	}
+}
+
+5. Heap Sort
+O(n log n)
+
+void heapify(int* Arr, int i, int len)
+{
+	int largest = i;
+	int l = i*2+1;
+	int r = i*2+2;
+	if(Arr[l] > Arr[largest])
+		largest = l;
+	if(Arr[r] > Arr[largest])
+		largest = r;
+	
+	if(largest != i)
+	{
+		swap(Arr[largest], Arr[i]);
+		heapify(Arr, largest, len);
+	}
+	
+}
+void heapSort(int* Arr, int len)
+{
+	for(int i=len/2-1; i>=0; i--)
+	{
+		heapify(Arr, i, len);
+	}
+	for(int i=len-1; i>=0; i--)
+	{
+		swap(Arr[i], Arr[0]);
+		heapify(Arr, 0, i);
+	}
+}
+
+6. Merge Sort
+O(n log n)
+
+void merge(int Arr[], int left, int mid, int right)
+{
+	int i=left;
+	int j=mid+1;
+	int k=left;
+	int temp[50];
+	while(i<=mid && j<=right)
+	{
+		if(Arr[i]<Arr[j])
+		{
+			temp[k] = Arr[i];
+			k++;
+			i++;
+		}
+		else
+		{
+			temp[k] = Arr[j];
+			k++;
+			j++;
+		}
+	}
+	while(i<=mid)
+	{
+		temp[k]=Arr[i];
+		k++;
+		i++;
+	}
+	while(j<=right)
+	{
+		temp[k]=Arr[j];
+		k++;
+		j++;
+	}
+	for(int i=left; i<k; i++)
+		Arr[i]=temp[i];
+
+}
+void mergeSort(int Arr[], int left, int right)
+{
+	if(left<right)
+	{
+		int mid;
+		mid = (left+right)/2;
+		
+		mergeSort(Arr, left, mid);
+		mergeSort(Arr, mid+1, right);
+		merge(Arr, left, mid, right);
+	}
+	return;
+}
+
+6. Counting Sort
+O(n + k)
+
+void countingSort(int* Arr, int len)
+{
+	int out[10];
+	int count[20]={0};
+	for(int i=0; i<len; i++)
+	{
+		count[Arr[i]] += 1;
+	}
+	
+	for(int i=1; i<20; i++)
+	{
+		count[i] = count[i] + count[i-1];
+	}
+	
+	for(int i=0; i<len; i++)
+	{
+		out[count[Arr[i]]-1] = Arr[i];
+	}
+	for(int i=0; i<len; i++)
+		Arr[i] = out[i];
+} 
+

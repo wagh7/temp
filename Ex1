@@ -1,0 +1,432 @@
+CI processes
+	Continuous Integration
+key performance indicators (KPIs) and service level agreements (SLAs)
+
+Multi-threading problems
+
+C
+1. print even/odd by two thread alternate
+
+#include <pthread>
+pthread_mutex_t m;
+pthread_cond_t* cond;
+int flag = 1;
+int total =2;
+int count = 1;
+int max = 20;
+void fun(void* no)
+{
+	int n = * (int*)no;
+	while(count <= max)
+	{
+		pthread_mutex_lock(&m);
+		
+		if(n != flag)
+		{
+			pthread_cond_wait(cond[n], &m);
+		}
+		cout<<count<<endl;
+		pthread_cond_signal(cond[flag], &m);
+		pthread_mutex_unlock(&m);
+		
+		count++;
+	}
+}
+
+int main()
+{
+	pthread_t* t;
+	t = (pthread_t*)malloc(sizeof(pthread_t) * 2);
+	cond = (pthread_cond_t*)malloc(sizeof(pthread_cond_t) * 2);
+	
+	int arr[2] = {1, 2};
+	for(int i=0; i<total; i++)
+	{
+		create_thread(&t[i], NULL, fun, void*(&arr[i]));
+	}
+	
+	for(int i=0; i<total; i++)
+	{
+		pthread_join(t[i]);
+	}
+}
+
+
+
+
+#include <conio.h>
+
+
+pthread_cond_t* cond;
+pthread_mutex_t mutex;
+int total = 20;
+int index = 0;
+int flag = 0;
+
+void fun(void* i)
+{
+	int mark = * (int*) (i);
+		
+	while(index < 20)
+	{
+	 pthread_mutex_lock(&mutex);
+	
+	 if(mark != flag)
+	 {
+		pthread_cond_wait(&cond[mark], &mutex);
+	 }
+	 printf("%d \n",index+1);
+	 index++;
+	 if(mark == 1)
+		mark = 0;
+	 else
+		mark = 1;
+	 pthread_cond_signal(&cond[mark]);
+	 pthread_mutex_unlock(&mutex);
+	}
+}
+int main()
+{
+	pthread_t* th;
+	th = (pthread_t*)malloc(sizeof(pthread_t) * 2 );
+	cond = (pthread_cond_t*)malloc(sizeof(pthread_cond_t) * 2);
+	
+	int arr[2];
+	arr[0] = 0;
+	arr[1] = 1;
+	//create threads
+	pthread_create(&th[0], NULL, fun, void*(&arr[0]));
+	pthread_create(&th[1], NULL, fun, void*(&arr[1]));
+	
+	// Join the threads
+	pthread_join(th[0]);
+	pthread_join(th[1]);
+}
+
+C++
+singleton class 
+
+class single
+{
+	private:
+		static atomic<single*> ptr=NULL;
+		static mutex m;
+		single()
+		{}
+	public:
+		static single* getInstance()
+		{
+			
+			if(ptr == NULL)
+			{
+				unique_lock<mutex> l(m);
+				if(ptr == NULL)
+					ptr = new signle();
+			}
+			return ptr;
+		}
+};
+
+
+// thread
+thread t(fun, 10);
+
+
+// future
+#include <future>
+#include <condition_variable>
+
+// to return value from thread fun
+void fun(int x)
+{
+	return x*2;
+}
+
+int a = 10;
+
+future<int> f = async(fun, a);
+f.get();
+
+async(fun, a).
+then([](future<int> f)
+{
+	int z = f.get();
+});
+
+
+// to send data to thread
+promise<int> p;
+future<int> f = p.get_future();
+async(fun, a, ref(f)).
+then([](future<int> f1)
+{
+	f1.get();
+});
+
+f.set_value(2);
+
+
+// condition_variable
+notify_all()         ?
+notify_any()         ?
+If there are ten threads blocked on the condition variable, for example, notify_one() will unblock only one thread, while notify_all() will unblock them all
+
+//Tree
+struct node
+{
+	int data;
+	node* left;
+	node* right;
+};
+
+// create tree
+// create binary tree from array
+node* create(int* arr, int len, int i)
+{
+	node* rt = NULL;
+	if(i < len)
+	{
+	rt = new node();
+	rt->data = arr[i];
+	rt->left = create(arr, len, i*2 +1);
+	rt->right = create(arr, len, i*2+2);
+	}
+	
+	return rt;
+}
+
+// get vertical sum
+// mirror
+// clone
+// get all path from root to all leaf node
+
+
+//Sorting//
+
+void selectionSort(int* arr, int len)
+{
+	if(len <=0)
+		return;
+	for(int i=0;i<len;i++)
+	{
+		for(int j=i+1; j<len; j++)
+		{
+			if(arr[i] > arr[j])
+				swap(arr[i], arr[j]);
+		}
+	}
+}
+
+//Bubble//
+void bubbleSort(int* arr, int len)
+{
+	if(len<=0)
+		return;
+	int flag = 0;
+	for(int i=0;i<len; i++)
+	{
+		for(int j=0; j<len-1; j++)
+		{
+			if(arr[j]>arr[j+1])
+			{
+				flag = 1;
+				swap(arr[j], arr[j+1]);
+			}
+		}
+		if(flag == 0 )
+			break;
+	}
+	
+}
+
+//Insertion//
+void indertionSort(int* arr, int len)
+{
+	if(len<=0)
+		return;
+	for(int i=1; i<len; i++)
+	{
+		int j = i;
+		int x = arr[j];
+		while(j>0 && arr[j-1]>x)
+		{
+			arr[j] = arr[j-1];
+			j--;
+		}
+		arr[j] = x;
+	}
+}
+
+//Quick//
+void quick(int* arr, int low, int high)
+{
+	if(len <=0)
+		return;
+	int l = low+1;
+	int r = high;
+	
+	if(low<=high)
+	{
+		while(l<r)
+		{
+			while(l<high && arr[l]<arr[low])
+				l++;
+			while(r>low && arr[r]>arr[low])
+				r--;
+			
+			if(l<r && arr[l]!=arr[r])
+				swap(arr[l],arr[r]);
+		}
+		if(arr[low]!=arr[r])
+			swap(arr[low],arr[r]);
+		quick(arr, low, r-1);
+		quick(arr, r+1, high);
+	}
+}
+
+//Heap//
+void heap(int* arr, int len)
+{
+	for(int i=len/2-1; i>=0; i--)
+	{
+		hepify(arr, n, i);
+	}
+	for(int i=len-1; i>=0; i++)
+	{
+		swap(arr[0],arr[i]);
+		hepify(arr, i, 0);
+	}
+}
+
+void hepify(int* arr, int n, int i)
+{
+	int largest = i;
+	int l = i * 2+1;
+	int r = i*2+2;
+	if(arr[l]>arr[largest])
+		largest = l;
+	if(arr[r]>arr[largest])
+		largest = r;
+	if(largest != i)
+	{
+		swap(arr[largest],arr[i]);
+		hepify(arr, n, largest);
+	}
+}
+
+
+// multi-thread
+#include <thread>
+#include <future>
+#include <condition_variable>
+#include <mutex>
+
+this_thread::sleep_for();
+this_thread::get_id();
+
+int fact(int no)
+{
+	return no;
+}
+
+thread t1(fun , 1);
+thread t2(fun, ref(1));
+thread t3(std::move(t1));
+thread t4(&Person::print, &obj);
+
+future<int> f = async(fun, 1);
+f.get();
+
+async(fun, 1).
+then([](future<int> f)
+{
+	f.get();
+});
+
+promise<int> p;
+future<int> f = p.get_future();
+async(fun, 12, ref(f));
+f.set_value();
+
+
+
+
+//
+#include <pthread.h>
+#include <stdio.h>
+
+pthread_mutex_t m;
+pthread_cond_t* cond;
+int count=1;
+int max = 20;
+int flag =1;
+int threads = 2;
+void fun(void* no)
+{
+	int n = * (int*)no;
+	
+	while(count<=max)
+	{
+		pthread_mutex_lock(&m);
+		
+		if(n != flag)
+		{
+			pthread_cond_signal(&cond[n], &m);
+		}
+		printf("%d %d", pthread_self(), count);
+		if(flag == 1)
+			flag=2;
+		else
+			flag = 1;
+		count++;
+			
+		pthread_cond_signal(&cond[flag]);
+		pthread_mutex_unlock(&m);
+		
+	
+	}
+}
+int main()
+{
+	pthread_t* t;
+	t = (pthread_t*)malloc(sizeof(pthread_t)*2);
+	cond = (pthread_cond_t*)malloc(sizeof(pthread_cond_t) * 2);
+	
+	int Arr[2];
+	Arr[0] = 1;
+	Arr[1] = 2;
+	for(int i=0; i<threads; i++)
+	{
+		pthread_create(&t[i], NULL, fun, (void*)&Arr[i]);
+	}
+	
+	for(int i=0; i<threads; i++)
+	{
+		pthread_join(&t[i]);
+	}
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

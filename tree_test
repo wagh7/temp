@@ -1,0 +1,305 @@
+//Tree
+
+struct node
+{
+	int data;
+	node* left;
+	node* right;
+};
+
+node* create(int* Arr, int i, int len)
+{
+	if(len <= 0)
+		return NULL;
+	if(i<len)
+	{
+		node* rt = new node();
+		rt->data = Arr[i];
+		rt->left = create(Arr, i*2+1, len);
+		rt->right = create(Arr, i*2+2, len)
+	}
+}
+
+void traverse(const node* rt)
+{
+	if(rt==NULL)
+	{
+		cout<<"Tree is emplty"<<endl;
+	}
+	else
+	{
+		node* t = rt;
+		queue<node*> q;
+		q.push(t);
+		while(!q.empty())
+		{
+			t = q.front();
+			q.pop();
+			cout<<t->data<<" ";
+			if(t.left!=NULL)
+				q.push(t.left);
+			if(t.right!=NULL)
+				q.push(t.right);
+		}
+	}
+}
+
+void levelWiseT(node* rt)
+{
+	if(rt == NULL)
+		return NULL;
+	queue<node*> q;
+	q.push(rt);
+	while(!q.empty())
+	{
+		int sz = q.size();
+		while(sz>0)
+		{
+			rt = q.front();
+			q.pop();
+			cout<<rt->data<<" ";
+			if(rt->left != NULL)
+				q.push(rt->left);
+			if(rt->right != NULL)
+				q.push(rt->right);
+			sz--;
+		}
+		cout<<endl;
+	}
+}
+
+void addNode(node** rt, int no)
+{
+	if(*rt == NULL)
+	{
+		*rt = new node();
+		*(rt)->data = no;
+		*(rt)->left = NULL;
+		*(rt)->right = NULL;
+		
+		return; 
+	}
+	if(*(rt)->data > no)
+		addNode(*(rt)->left, no);
+	else
+		addNode(*(rt)->right, no)
+}
+
+void inOrder(node* rt)
+{
+	if(rt == NULL)
+		return;
+	stack<node*> s;
+	
+	while(!s.emprt() && rt!=NULL)
+	{
+		if(rt!=NULL)
+		{
+			s.push(rt);
+			rt=rt->left;
+		}
+		if(!s.empty() && rt==NULL)
+		{
+			rt = s.top();
+			cout<<rt->data<<" ";
+			s.pop();
+			rt = rt->right;
+		}
+		if(s.empty() && rt==NULL)
+		{
+			break;
+		}
+	}
+}
+
+//Postorder
+void postOrder(node* rt)
+{
+	if(rt == NULL)
+		return;
+	stack<node*> s;
+	
+	do
+	{
+		while(rt != NULL)
+		{
+			if(rt->right != NULL)
+				s.push(rt->right);
+			s.push(rt);
+			rt = rt->left;
+		}
+		rt = s.top();
+		s.pop();
+		
+		if(!s.empty() && rt->right!=NULL && rt->right == s.top())
+		{
+			s.pop();
+			s.push(rt);
+			rt = rt->right;
+		}
+		else
+		{
+			cout<<rt->data;
+			rt = NULL;
+		}
+		
+	}while(!s.empty())
+}
+
+//Preorder
+int preOrder(node* rt)
+{
+	if(rt == NULL)
+		return -1;
+	
+	stack<node*> s;
+	s.push(rt);
+	while(!s.empty())
+	{
+		rt = s.top();
+		s.pop();
+		cout<<rt->data<<endl;
+		if(rt->right != NULL)
+			s.push(rt->right);
+		if(rt->left != NULL)
+			s.push(rt->left);
+	}
+}
+
+//Clone
+node* cloneTree(node* rt)
+{
+	if(rt == NULL)
+		return NULL;
+	node* new = new node();
+	
+	new->left = cloneTree(rt->left);
+	new->right = cloneTree(rt->right);
+	
+	return new;
+}
+
+//Mirror
+node* mirrorTree(node* rt)
+{
+	if(rt == NULL)
+		return NULL;
+	
+	node* new1 = new node();
+	new1->data = rt->data;
+	
+	new1->left = mirrorTree(rt->right);
+	new1->right = mirrorTree(rt->left);
+	
+	return new1;
+}
+
+//Level
+int getLevel(node* rt, node* n, int l)
+{
+	if(rt == NULL)
+		return 0;
+	if(rt == n)
+		return l;
+	
+	return getLevel(rt->left, n, l+1);
+	return getLevel(rt->right, n, l+1);
+}
+
+//Level
+int getLevel_1(node* rt, int n, int l)
+{
+	if(rt == NULL)
+		return l;
+	if(rt->data == n)
+		return l;
+	
+	getLevel_1(rt->left, n, l+1);
+	getLevel_1(rt->right, n, l+1);
+}
+
+//height
+int height(node* n)
+{
+	if(n == NULL)
+		return 0;
+	return 1 + max(height(rt->left, n),
+				height(rt->right, n));
+}
+
+//isSibling
+bool isSibling(node* rt, node* n1, node* n2)
+{
+	if(rt->left==n1 && rt->right==n2 ||
+		rt->left==n2 && rt->right==n1 ||
+		isSibling(rt->left, n1, n2) ||
+		isSibling(rt->right, n1, n2))
+		return true;
+	return false;
+}
+
+//isCousin
+bool isCousin(node* rt, node* n1, node* n2)
+{
+	if(rt != NULL || n1 != NULL || n2 != NULL)
+		return 0;
+	if(n1 == n2)
+		return 0;
+	if(!isSibling(n1, n2) && height(n1)==height(n2))
+		return true;
+	else
+		return false;
+}
+
+// Height
+int getHeight(node* n)
+{
+	if(n==NULL)
+		return 0;
+	 return 1+max(getHeight(n->left), getHeight(n->right));
+}
+
+void getPath(node* rt, int d, int l, vector<int>& v)
+{
+	if(rt == NULL)
+		return;
+		
+	getPath(rt->left, d-1, l, v);
+	if(l == n)
+		v.push_back(rt->data);
+	getPath(rt->right, d+1, l, v);
+	
+}
+
+void print(vector<int> v)
+{
+
+ }
+// get vertical sum
+void getVerticalSum(node* rt)
+{
+	if(rt == NULL)
+		return;
+	node* t = rt;
+	int l=0;
+	int r=0;
+	while(t->left != NULL)
+	{
+		t=t->left;
+		l--;
+	}
+	t = rt;
+	while(t->right != NULL)
+	{
+		t = t->right;
+		r++;
+	}
+	for(int i=l; i<=r; i++)
+	{
+		int sum = 0;
+		vector<int> v;
+		getPath(rt, 0, i, v);
+		print(v);
+	}
+}
+
